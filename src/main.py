@@ -9,11 +9,17 @@ def wprowadz_kwote():
             
 def wprowadz_walute():
     return input("Wprowadź kod waluty")
+
+
 def wprowadz_date():
     while True:
-        data_str=input("Wprowadz datę faktury  (RRRR-MM-DD):")
-        data=datetime.datetime.strtime(data_str, '%Y-%m-%d')
-        return data.strftime('%Y-%m-%d')
+        try:
+            data_str=input("Wprowadz datę faktury (RRRR-MM-DD):")
+            data=datetime.datetime.strptime(data_str,'%Y-%m-%d')
+            return data.strftime('%Y-%m-%d')
+        except ValueError:
+            print("nieprawidłowy format")
+            
  
 def main():
      kwota= wprowadz_kwote()
@@ -21,3 +27,6 @@ def main():
      data=wprowadz_date()
      print(f"Kwota faktury: {kwota} {waluta}")
      print(f"Data faktury: {data}")
+     
+if __name__=="__main__":
+     main()
