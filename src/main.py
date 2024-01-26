@@ -1,32 +1,37 @@
 import datetime
-def wprowadz_kwote():
-    while True:
-            kwota= float(input("Wprowadź kwotę"))
-            if kwota < 0:
-                print("kwota nie może być ujemna")
-            else:
-                return kwota
-            
-def wprowadz_walute():
-    return input("Wprowadź kod waluty")
-
-
-def wprowadz_date():
+def enter_amount():
     while True:
         try:
-            data_str=input("Wprowadz datę faktury (RRRR-MM-DD):")
+            amount= float(input("Enter amount "))
+            if amount < 0:
+                print("The amount cannot be negative ")
+            else:
+                return amount
+        except ValueError:
+                print("Invalid amount format.Enter a number ")
+                
+
+            
+def enter_currency():
+    return input("Enter currency code ")
+
+
+def enter_date():
+    while True:
+        try:
+            data_str=input("Enter the invoice date  (RRRR-MM-DD):")
             data=datetime.datetime.strptime(data_str,'%Y-%m-%d')
             return data.strftime('%Y-%m-%d')
         except ValueError:
-            print("nieprawidłowy format")
+            print("Invalid format ")
             
  
 def main():
-     kwota= wprowadz_kwote()
-     waluta= wprowadz_walute()
-     data=wprowadz_date()
-     print(f"Kwota faktury: {kwota} {waluta}")
-     print(f"Data faktury: {data}")
+     amount= enter_amount()
+     currency= enter_currency()
+     date= enter_date()
+     print(f"Invoice amount: {amount} {currency}")
+     print(f"Date of invoice: {date}")
      
 if __name__=="__main__":
      main()
