@@ -14,23 +14,28 @@ def validate_date(date):
 def enter_date():
     sample_date = input("Enter the invoice date (YYYY-MM-DD):")
     validate_date(sample_date)
+    return sample_date
 
-# def enter_amount():
+def enter_amount():
+    try:
+        amount = float(input("Enter invoice cost: "))
+    except ValueError:
+        raise ValueError("Inocorrect data type, expected float")
+    return amount
     
-# def enter_currency():
+def enter_currency():
+    currency = input("Enter currency name: ")
+    return currency
     
-# def get__data():
-    # date = get_date
-    # curr = get_currency
-    # amount = get_invoice
-    # temp = []
-    # temp.append(get_date())
-    # ....
-    # INVOICES.append(temp)
+def get_user_data():
+    date = enter_date()
+    amount = enter_amount()
+    currency = enter_currency()
+    temp = []
+    temp.append(date)
+    temp.append(amount)
+    temp.append(currency)
+    INVOICES.append(temp)
+    print(INVOICES)
 
-
-    
-enter_date()
-
-#dodanie do tablicy 3 zmiennych (kwota, data, waluta)
-# 
+get_user_data()
