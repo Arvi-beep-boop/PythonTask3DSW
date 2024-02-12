@@ -38,7 +38,7 @@ def get_Currency_avg(code, date):
     url = f'http://api.nbp.pl/api/exchangerates/rates/A/{code}/{date}/?format=json'
     response = requests.get(url)
     json = response.json()
-    print(json)
+    print(json['rates'][0]['mid'])
     # return json
     
 # Playground
