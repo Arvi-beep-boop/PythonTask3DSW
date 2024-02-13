@@ -42,6 +42,6 @@ def get_Currency_avg(code, date):
     # return json
     
 # Playground
-m_currency_code = input("Currency code: ")
-m_date = input("Date (YYYY-MM-DD): ")
-get_Currency_avg(m_currency_code, m_date)
+# m_currency_code = input("Currency code: ")
+# m_date = input("Date (YYYY-MM-DD): ")
+# get_Currency_avg(m_currency_code, m_date)
