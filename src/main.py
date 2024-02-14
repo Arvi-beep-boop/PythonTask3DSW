@@ -2,6 +2,11 @@ import API
 import csv
 # Maybe work only on csv file instead of arrays?
 INVOICES = []
+m_fields = ['INVOICE DATE','INVOICE VALUE','INVOICE CURRENCY','PAYMENT DATE','PAYMENT VALUE','PAYMENT CURRENCY']
+m_file = 'INVOICES.csv'
+# m_file = open("INVOICES.csv", 'a')
+# m_writer = csv.writer(m_file)
+# m_reader = csv.reader(m_file)
 
 def enter_date():
     date = input("Enter the invoice date (YYYY-MM-DD):")
@@ -18,7 +23,7 @@ def enter_amount():
             print("Inocorrect data type, expected float (e.g. 20.50): ")
             continue
            
-        return amount
+        return str(amount)
     
 def enter_currency():
     currency = input("Enter currency name: ").upper()
@@ -26,8 +31,11 @@ def enter_currency():
     return currency
 
 def show_all_invoices():
-    for invoice in INVOICES:
-        print(f'DATE: {invoice[0]} VALUE: {invoice[1]} CURRENCY: {invoice[2]}')
+    file = open(m_file, 'r')
+    reader = csv.reader(file)
+    for i, row in enumerate(reader):
+        print(str(i)+'.', row)
+    file.close()
 
 # Invoice data
 # def add_new_invoice():
@@ -36,16 +44,20 @@ def show_all_invoices():
 #     INVOICES.append(temp)
 #     print(INVOICES)
 
-def add_new_invoice(file):
+def add_new_invoice():
     # DATE VALUE CURRENCY PAYMENT_VALUE(?)
-    file["INVOICE DATE"].append(enter_date())
-    file["INVOICE VALUE"].append(enter_amount())
-    file["INVOICE CURRENCY"].append(enter_currency())
-    # temp = [enter_date(), enter_amount(), enter_currency(), 0]
-    # INVOICES.append(temp)
-    # print(INVOICES)
+    file = open(m_file, 'a', newline='')
+    writer = csv.writer(file)
+    date = str(enter_date())
+    amount = str(enter_amount())
+    currency = str(enter_currency())
+    writer.writerow([date,amount,currency])
+    file.close()
 
 def add_new_payment():
+    pass
+
+def view_payments():
     pass
 
 m_userMenu = {
@@ -55,15 +67,14 @@ m_userMenu = {
     4: ["View payments",]
 }
 
-file = open("INVOICES.xlsx", 'w')
-reader = csv.DictReader(file)
-add_new_invoice(reader)
+
     
 
 # MAIN LOOP
-# while True:
-#     for option in m_userMenu: 
-#         print(str(option) + ".", m_userMenu[option][0])
-
-#     selection = int(input("Select option: "))
-#     m_userMenu[selection][1]()
+while True:
+    # print main menu
+    for option in m_userMenu: 
+        print(str(option) + ".", m_userMenu[option][0])
+# get option from user
+    selection = int(input("Select option: "))
+    m_userMenu[selection][1]()
