@@ -1,17 +1,20 @@
 import API
 import csv
-# Maybe work only on csv file instead of arrays?
-INVOICES = []
-m_fields = ['INVOICE DATE','INVOICE VALUE','INVOICE CURRENCY','PAYMENT DATE','PAYMENT VALUE','PAYMENT CURRENCY']
+
+m_fields = [
+    'INVOICE DATE','INVOICE VALUE','INVOICE CURRENCY','INVOICE VALUE PLN',
+    'PAYMENT DATE','PAYMENT VALUE','PAYMENT CURRENCY', 'PAYMENT VALUE PLN'
+    ]
 m_file = 'INVOICES.csv'
-# m_file = open("INVOICES.csv", 'a')
-# m_writer = csv.writer(m_file)
-# m_reader = csv.reader(m_file)
+
 
 def enter_date():
-    date = input("Enter the invoice date (YYYY-MM-DD):")
-    API.validate_date(date)
-    return date
+    while True:
+        date = input("Enter the invoice date (YYYY-MM-DD):")
+        if(API.validate_date(date) == False):
+            continue
+        else:
+            return date
 
 def enter_amount():
     while True:
@@ -35,40 +38,56 @@ def show_all_invoices():
     reader = csv.reader(file)
     for i, row in enumerate(reader):
         print(str(i)+'.', row)
+    print("=" * 100)
     file.close()
 
-# Invoice data
-# def add_new_invoice():
-#     # DATE VALUE CURRENCY PAYMENT_VALUE(?)
-#     temp = [enter_date(), enter_amount(), enter_currency(), 0]
-#     INVOICES.append(temp)
-#     print(INVOICES)
 
 def add_new_invoice():
-    # DATE VALUE CURRENCY PAYMENT_VALUE(?)
     file = open(m_file, 'a', newline='')
     writer = csv.writer(file)
-    date = str(enter_date())
-    amount = str(enter_amount())
-    currency = str(enter_currency())
-    writer.writerow([date,amount,currency])
+    date, currency, amount = enter_date(), enter_currency(), enter_amount()
+    writer.writerow([date,amount,currency, API.calculate_to_pln(currency, date, float(amount))])
     file.close()
 
 def add_new_payment():
-    pass
+    read = open(m_file,'r')
+    temp = [m_fields]
+    show_all_invoices()
+    num = int(input("Enter line number:" ))
+    reader = csv.DictReader(read)
+    for i, row in enumerate(reader, start=1):
+        if i > 0:
+            if i == num:
+                currency, date, amount = enter_currency(), enter_date(), enter_amount()
+                temp.append([
+                    row['INVOICE DATE'], row['INVOICE VALUE'], row['INVOICE CURRENCY'], row['INVOICE VALUE PLN'],
+                    date, amount, currency, API.calculate_to_pln(currency,date, amount)])
+            else:
+                row_values = []
+                for field in m_fields:
+                    row_values.append(row[field])
+                temp.append(row_values)
+    read.close()
+    write = open(m_file, 'w', newline='')
+    writer = csv.writer(write)
+    writer.writerows(temp)
+    write.close()
 
-def view_payments():
-    pass
+def get_exchange_rate():
+    API.get_Currency_avg(enter_currency(), enter_date())
 
 m_userMenu = {
     1: ["Add new invoice", add_new_invoice], 
     2: ["View all invoices", show_all_invoices],
-    3: ["Add new payment",add_new_payment],
-    4: ["View payments",]
+    3: ["Add new payment", add_new_payment],
+    4: ["Get Exchange rate", get_exchange_rate],
+    5: ["Quit application", quit]
+
 }
 
 
     
+# API.get_NBP_table('2024-02-11')
 
 # MAIN LOOP
 while True:
