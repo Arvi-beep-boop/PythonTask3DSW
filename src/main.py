@@ -7,7 +7,6 @@ m_fields = [
     ]
 m_file = 'INVOICES.csv'
 
-
 def enter_date():
     while True:
         date = input("Enter the invoice date (YYYY-MM-DD):")
@@ -19,7 +18,7 @@ def enter_date():
 def enter_amount():
     while True:
         try:
-            amount = float(input("Enter invoice cost: "))
+            amount = float(input("Enter value: "))
             if amount < 0:
                 print("The amount cannot be negative ")
         except ValueError:
@@ -40,7 +39,6 @@ def show_all_invoices():
         print(str(i)+'.', row)
     print("=" * 100)
     file.close()
-
 
 def add_new_invoice():
     file = open(m_file, 'a', newline='')
@@ -74,7 +72,9 @@ def add_new_payment():
     write.close()
 
 def get_exchange_rate():
-    API.get_Currency_avg(enter_currency(), enter_date())
+    currency = enter_currency()
+    value = API.get_Currency_avg(currency, enter_date())
+    print(f'Current exchange rate for {currency} is: {value} PLN')
 
 m_userMenu = {
     1: ["Add new invoice", add_new_invoice], 
@@ -82,12 +82,7 @@ m_userMenu = {
     3: ["Add new payment", add_new_payment],
     4: ["Get Exchange rate", get_exchange_rate],
     5: ["Quit application", quit]
-
 }
-
-
-    
-# API.get_NBP_table('2024-02-11')
 
 # MAIN LOOP
 while True:

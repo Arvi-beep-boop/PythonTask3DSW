@@ -1,7 +1,6 @@
 import requests
 import datetime
 
-# TO DO: Move date format validation to another script, do checking if there's data from nbp for specified date here instead
 # Datetime format validation: 
 def validate_date(date):
     if date == "today":
@@ -25,12 +24,7 @@ def validate_currency_code(json, code):
             return
     raise ValueError(f"Incorrect currency code: {code}")
     
-# TO DO: 
-# handle errors
-# handle different date formats (?) -> check for YYYY-MM-DD instead
-# handle no-data on specified date (get the closest data to required one)
-
-# Returns default A table at specified date' 
+# Returns default A table at specified date
 def get_NBP_table(date):
     response = requests.get(f'http://api.nbp.pl/api/exchangerates/tables/A/{date}')
     if response.status_code == 404:
@@ -38,7 +32,6 @@ def get_NBP_table(date):
     else:
         return response.json()
 
-    
 # Returns currency average rate at specified date, accepts "today" 
 def get_Currency_avg(code, date):
     # validate_date(date)
@@ -53,15 +46,8 @@ def get_Currency_avg(code, date):
     url = f'http://api.nbp.pl/api/exchangerates/rates/A/{code}/{m_date}/?format=json'
     response = requests.get(url)
     json = response.json()
-    print(json['rates'][0]['mid'])
     return json['rates'][0]['mid']
-
 
 def calculate_to_pln(code, date, value):
     if code == "PLN": return
     return round(float(get_Currency_avg(code, date))*value, 2)
-
-# Playground
-# m_currency_code = input("Currency code: ")
-# m_date = input("Date (YYYY-MM-DD): ")
-# get_Currency_avg(m_currency_code, m_date)
