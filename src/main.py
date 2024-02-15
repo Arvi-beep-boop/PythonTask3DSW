@@ -66,7 +66,7 @@ def show_payment_status():
             status = "UNKNOWN"
             val = 'N'
         if str(val) != 'N': val = round(val, 2)
-        print(f'Invoice No. {str(i)+'.'} is {status} by {val} PLN')
+        print(f'Invoice No. {str(i)+'.'} issued {row['INVOICE DATE']} for {row['INVOICE VALUE']} {row['INVOICE CURRENCY']} is {status} by {val} PLN')
     file.close()
 
 def add_new_invoice():
@@ -82,23 +82,30 @@ def add_new_invoice():
 def add_new_payment():
     read = open(m_file,'r')
     temp = [m_fields]
-    show_all_invoices()
-    num = int(input("Enter line number:" ))
     reader = csv.DictReader(read)
-    for i, row in enumerate(reader, start=1):
+    show_all_invoices()
+    while True:
+        num = int(input("Enter line number:" ))
+        if num < len(reader): #object of type 'DictReader' has no len() TO DO: FIX
+            break
+        else: print("Inavlid line number")
+    currency, date, amount = enter_currency(), enter_date(), enter_amount()
+
+    # CHECK DATA INTEGRITY
+    for row in enumerate(reader, start=1):
         if i > 0:
             if i == num:
-                currency, date, amount = enter_currency(), enter_date(), enter_amount()
-
-                # CHECK DATA INTEGRITY
                 if(row['PAYMENT DATE'] and row['PAYMENT CURRENCY']):
                     if(currency != row['PAYMENT CURRENCY']):
                         print(f"Making multiple payments in different currencies is not allowed, expected {row['PAYMENT CURRENCY']}")
-                        break
+                        return
                 if(datetime.date.fromisoformat(date) < datetime.date.fromisoformat(row['INVOICE DATE'])):
                     print(f'Invalid date, paying for invoice earlier than invoice date is invalid')
-                    break
-                
+                    return
+    # ADD PAYMENT
+    for i, row in enumerate(reader, start=1):
+        if i > 0:
+            if i == num:
                 payment_val = 0 if not row['PAYMENT VALUE'] else float(row['PAYMENT VALUE'])
                 payment_val_pln = 0 if not row['PAYMENT VALUE PLN'] else float(row['PAYMENT VALUE PLN'])
                 if currency == "PLN":
@@ -139,9 +146,7 @@ m_userMenu = {
 
 # MAIN LOOP
 while True:
-    # print main menu
     for option in m_userMenu: 
         print(str(option) + ".", m_userMenu[option][0])
-# get option from user
     selection = int(input("Select option: "))
     m_userMenu[selection][1]()
