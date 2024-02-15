@@ -3,17 +3,14 @@ import datetime
 
 # Datetime format validation: 
 def validate_date(date):
-    if date == "today":
-        return
-    else:
+    try: 
         if datetime.date.fromisoformat(date) < datetime.date(2002,1,2):
-                print("Only dates later than 2002-01-02 are accepted")
-                return False
-        try: 
-            datetime.date.fromisoformat(date)
-        except ValueError:
-            print("Incorrect data format, expected: YYYY-MM-DD")
+            print("Only dates later than 2002-01-02 are accepted")
             return False
+        datetime.date.fromisoformat(date)
+    except ValueError:
+        print("Incorrect data format, expected: YYYY-MM-DD")
+        return False
 
 # Currency code validation
 # TO DO: think of adding a predefined file with all currency codes, what if data for -
@@ -50,4 +47,4 @@ def get_Currency_avg(code, date):
 
 def calculate_to_pln(code, date, value):
     if code == "PLN": return
-    return round(float(get_Currency_avg(code, date))*value, 2)
+    return round(float(get_Currency_avg(code, date))*float(value), 2)
