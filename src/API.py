@@ -1,7 +1,7 @@
 import requests
 import datetime
 
-# Datetime format validation: 
+# Datetime format validation, returns False if validation is unsuccesfull 
 def validate_date(date):
     try: 
         if datetime.date.fromisoformat(date) < datetime.date(2002,1,2):
@@ -40,6 +40,7 @@ def get_Currency_avg(code, date):
     json = response.json()
     return json['rates'][0]['mid']
 
+# Returns value in PLN for specified currency, date and value
 def calculate_to_pln(code, date, value):
     if code == "PLN": return
     return round(float(get_Currency_avg(code, date))*float(value), 2)

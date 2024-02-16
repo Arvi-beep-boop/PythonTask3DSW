@@ -9,14 +9,16 @@ m_fields = [
 m_file = 'INVOICES.csv'
 m_currencies = ['USD', 'GBP', 'EUR', 'PLN']
 
+# Gets date from user and validates it
 def enter_date():
     while True:
-        date = input("Enter the invoice date (YYYY-MM-DD):")
+        date = input("Enter the date (YYYY-MM-DD):")
         if(API.validate_date(date) == False):
             continue
         else:
             return date
 
+# Gets value e.g 20.60
 def enter_amount():
     while True:
         try:
@@ -28,7 +30,8 @@ def enter_amount():
             print("Inocorrect data type, expected float (e.g. 20.50): ")
             continue
         return str(amount)
-    
+
+# Gets currency name e.g USD 
 def enter_currency():
     while True:
         currency = input("Enter currency name: ").upper()
@@ -37,14 +40,16 @@ def enter_currency():
         else:
             print(f'Currency {currency} is invalid try: USD, GBP, PLN or EUR')
 
+# Shows all invoices (raw data from .csv file)
 def show_all_invoices():
     file = open(m_file, 'r')
     reader = csv.reader(file)
     for i, row in enumerate(reader):
         print(str(i)+'.', row)
-    print("=" * 100)
     file.close()
+    input("Press key to continue") 
 
+# Shows payments statuses for each invoice(line) number
 def show_payment_status():
     file = open(m_file, 'r')
     reader = csv.DictReader(file)
@@ -68,7 +73,9 @@ def show_payment_status():
         if str(val) != 'N': val = round(val, 2)
         print(f'Invoice No. {str(i)+'.'} issued {row['INVOICE DATE']} for {row['INVOICE VALUE']} {row['INVOICE CURRENCY']} is {status} by {val} PLN')
     file.close()
+    input("Press key to continue") 
 
+# Adds new invoice data (date, currency, value) to .csv file
 def add_new_invoice():
     file = open(m_file, 'a', newline='')
     writer = csv.writer(file)
@@ -78,17 +85,19 @@ def add_new_invoice():
     else:
         writer.writerow([date,amount,currency, API.calculate_to_pln(currency, date, float(amount))])
     file.close()
+    input("Press key to continue") 
 
+# Adds payment for selected invoice(line) number in .csv file, multiple payments for one invoice are available
 def add_new_payment():
     read = open(m_file,'r')
     temp = [m_fields]
     reader = csv.DictReader(read)
     show_all_invoices()
-    while True:
-        num = int(input("Enter line number:" ))
-        if num < len(reader): #object of type 'DictReader' has no len() TO DO: FIX
-            break
-        else: print("Inavlid line number")
+    # while True:
+    num = int(input("Enter line number:" ))
+        # if num < len(reader): #object of type 'DictReader' has no len() TO DO: FIX
+        #     break
+        # else: print("Inavlid line number")
     currency, date, amount = enter_currency(), enter_date(), enter_amount()
 
     # CHECK DATA INTEGRITY
@@ -126,7 +135,9 @@ def add_new_payment():
     writer = csv.writer(write)
     writer.writerows(temp)
     write.close()
+    input("Press key to continue") 
 
+# Returns exchange rate for specified currency and date
 def get_exchange_rate():
     currency = enter_currency()
     if currency == 'PLN':
@@ -134,6 +145,7 @@ def get_exchange_rate():
     else: 
         value = API.get_Currency_avg(currency, enter_date())
     print(f'Current exchange rate for {currency} is: {value} PLN')
+    input("Press key to continue") 
 
 m_userMenu = {
     1: ["Add New Invoice", add_new_invoice], 
@@ -148,5 +160,7 @@ m_userMenu = {
 while True:
     for option in m_userMenu: 
         print(str(option) + ".", m_userMenu[option][0])
-    selection = int(input("Select option: "))
+    try:    
+        selection = int(input("Select option: "))
+    except ValueError: input('Option number needed, press key to try again'); continue
     m_userMenu[selection][1]()
